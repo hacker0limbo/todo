@@ -1,11 +1,11 @@
 // 给 add button 绑定添加 todo 事件
 var bindEventAdd = function() {
     var addButton = document.querySelector('#id-button-add')
-    addButton.addEventListener('click', function(){
+    addButton.addEventListener('click', function() {
         // 获得 input.value
         var todoInput = document.querySelector('#id-input-todo')
         var task = todoInput.value
-        // 生成 todo 对象
+            // 生成 todo 对象
         var todo = {
             'task': task,
             'time': currentTime()
@@ -18,18 +18,18 @@ var bindEventAdd = function() {
 
 var bindEventEnter = function() {
     var todoContainer = document.querySelector('#id-div-container')
-    todoContainer.addEventListener('keydown', function(event){
+    todoContainer.addEventListener('keydown', function(event) {
         var target = event.target
-        if(event.key === 'Enter') {
+        if (event.key === 'Enter') {
             // 失去焦点
             target.blur()
-            // 阻止默认行为的发生, 也就是不插入回车
+                // 阻止默认行为的发生, 也就是不插入回车
             event.preventDefault()
-            // 更新 todo
+                // 更新 todo
             var index = indexOfElement(target.parentElement)
-            // 把元素在 todoList 中更新
+                // 把元素在 todoList 中更新
             todoList[index].task = target.innerHTML
-            // todoList.splice(index, 1)
+                // todoList.splice(index, 1)
             saveTodos()
 
         }
@@ -39,9 +39,9 @@ var bindEventEnter = function() {
 var bindEventButton = function() {
     // 通过 event.target 的 class 来检查点击的是什么
     var todoContainer = document.querySelector('#id-div-container')
-    todoContainer.addEventListener('click', function(event){
+    todoContainer.addEventListener('click', function(event) {
         var target = event.target
-        if(target.classList.contains('todo-done')) {
+        if (target.classList.contains('todo-done')) {
             // 给 todo div 开关一个状态 class
             var todoDiv = target.parentElement
             toggleClass(todoDiv, 'done')
@@ -49,15 +49,15 @@ var bindEventButton = function() {
             var todoDiv = target.parentElement
             var index = indexOfElement(target.parentElement)
             todoDiv.remove()
-            // 把元素从 todoList 中 remove 掉
-            // delete todoList[index]
+                // 把元素从 todoList 中 remove 掉
+                // delete todoList[index]
             todoList.splice(index, 1)
             saveTodos()
         } else if (target.classList.contains('todo-edit')) {
             var cell = target.parentElement
             var span = cell.children[3]
             span.setAttribute('contenteditable', 'true')
-            // span.contentEditable = true
+                // span.contentEditable = true
             span.focus()
         }
     })
@@ -65,16 +65,16 @@ var bindEventButton = function() {
 
 var bindEventBlur = function() {
     var todoContainer = document.querySelector('#id-div-container')
-    todoContainer.addEventListener('blur', function(event){
+    todoContainer.addEventListener('blur', function(event) {
         var target = event.target
         if (target.classList.contains('todo-label')) {
             // 让 span 不可编辑
             target.setAttribute('contenteditable', 'false')
-            // 更新 todo
+                // 更新 todo
             var index = indexOfElement(target.parentElement)
-            // 把元素在 todoList 中更新
+                // 把元素在 todoList 中更新
             todoList[index].task = target.innerHTML
-            // todoList.splice(index, 1)
+                // todoList.splice(index, 1)
             saveTodos()
         }
     }, true)
@@ -83,11 +83,11 @@ var bindEventBlur = function() {
 var bindEvents = function() {
     // 添加 todo
     bindEventAdd()
-    // 文本框输入 todo 按回车保存
+        // 文本框输入 todo 按回车保存
     bindEventEnter()
-    // 完成按钮和删除按钮
+        // 完成按钮和删除按钮
     bindEventButton()
-    // 文本框失去焦点后保存 todo
+        // 文本框失去焦点后保存 todo
     bindEventBlur()
 }
 
@@ -96,7 +96,7 @@ var insertTodo = function(todo) {
     // 添加到 container 中
     var todoContainer = document.querySelector('#id-div-container')
     var t = templateTodo(todo)
-    // 这个方法用来添加元素更加方便, 不需要 createElement
+        // 这个方法用来添加元素更加方便, 不需要 createElement
     todoContainer.insertAdjacentHTML('beforeend', t);
 }
 
