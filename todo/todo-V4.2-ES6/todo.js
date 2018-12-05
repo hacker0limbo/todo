@@ -39,7 +39,6 @@ class TodoController {
     constructor(todoModel, todoView) {
         this.todoModel = todoModel
         this.todoView = todoView
-            // this.initTodos()
     }
 
     bindEvent(elm, eventName, callback) {
@@ -73,10 +72,12 @@ class TodoController {
     }
 
     initTodos() {
-        this.todoModel.setTodoList(this.loadTodos())
-        for (let i = 0; i < this.todoModel.getTodoList().length; i++) {
-            const todo = this.todoModel.getTodoList()[i]
-            this.insertTodo(todo)
+        if (localStorage.getItem("todoList") !== null) {
+            this.todoModel.setTodoList(this.loadTodos())
+            for (let i = 0; i < this.todoModel.getTodoList().length; i++) {
+                const todo = this.todoModel.getTodoList()[i]
+                this.insertTodo(todo)
+            }
         }
     }
 
@@ -188,6 +189,7 @@ class TodoApp {
         const mainController = new MainController(todoModel, todoView)
     }
 }
+
 
 const __main = () => {
     const app = new TodoApp()
