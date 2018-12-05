@@ -1,6 +1,6 @@
 # todo
 
-利用 `localStorage` 完成的一个 `todo`, 包括重构, 封装.
-
-未来还有 `ajax` 的添加
+- Pure js DOM manipulation(1.0 - 4.1)
+- Refactor using mvc && es6(4.2)
+ 
 
