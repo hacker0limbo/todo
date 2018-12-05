@@ -1,38 +1,24 @@
 class TodoModel {
     constructor() {
         this.todoList = []
-        this.initTodos()
     }
 
-    saveTodos() {
-        const s = JSON.stringify(this.todoList)
-        localStorage.todoList = s
+    getTodoList() {
+        return this.todoList
     }
 
-    loadTodos() {
-        const s = localStorage.todoList
-        return JSON.parse(s)
+    setTodoList(newTodoList) {
+        this.todoList = newTodoList
     }
 
-    initTodos() {
-        this.todoList = this.loadTodos()
-        for (let i = 0; i < this.todoList.length; i++) {
-            const todo = this.todoList[i]
-            this.insertTodo(todo)
-        }
+    setTodoTask(index, content) {
+        this.todoList[index].task = content
     }
+}
 
-    addTodo(todo) {
-        this.todoList.push(todo)
-    }
 
-    insertTodo(todo) {
-        // 添加到 container 中
-        const todoContainer = e('#id-div-container')
-        const t = this.templateTodo(todo)
-            // 这个方法用来添加元素更加方便, 不需要 createElement
-        todoContainer.insertAdjacentHTML('beforeend', t);
-    }
+class TodoView {
+    constructor() {}
 
     templateTodo(todo) {
         const t = `
@@ -49,9 +35,11 @@ class TodoModel {
 }
 
 
-class Controller {
-    constructor(todoModel) {
+class TodoController {
+    constructor(todoModel, todoView) {
         this.todoModel = todoModel
+        this.todoView = todoView
+            // this.initTodos()
     }
 
     bindEvent(elm, eventName, callback) {
@@ -59,13 +47,45 @@ class Controller {
             callback(event)
         })
     }
+
+    saveTodos() {
+        const s = JSON.stringify(this.todoModel.getTodoList())
+        localStorage.todoList = s
+    }
+
+    loadTodos() {
+        const s = localStorage.todoList
+        return JSON.parse(s)
+    }
+
+    addTodo(todo) {
+        this.todoModel.todoList.push(todo)
+    }
+
+    deleteTodo(index) {
+        this.todoModel.todoList.splice(index, 1)
+    }
+
+    insertTodo(todo) {
+        const todoContainer = e('#id-div-container')
+        const t = this.todoView.templateTodo(todo)
+        todoContainer.insertAdjacentHTML('beforeend', t);
+    }
+
+    initTodos() {
+        this.todoModel.setTodoList(this.loadTodos())
+        for (let i = 0; i < this.todoModel.getTodoList().length; i++) {
+            const todo = this.todoModel.getTodoList()[i]
+            this.insertTodo(todo)
+        }
+    }
+
 }
 
 
-// controller
-class AddButtonController extends Controller {
-    constructor(todoModel) {
-        super(todoModel)
+class AddButtonController extends TodoController {
+    constructor(todoModel, todoView) {
+        super(todoModel, todoView)
         this._elm = e('#id-button-add')
 
         this.bindEvent(this._elm, 'click', (event) => {
@@ -77,27 +97,97 @@ class AddButtonController extends Controller {
                 'time': currentTime()
             }
 
-            this.todoModel.addTodo(todo)
-            this.todoModel.saveTodos(todo)
-            this.todoModel.insertTodo(todo)
+            this.addTodo(todo)
+            this.saveTodos(todo)
+            this.insertTodo(todo)
         })
     }
 }
 
 
-class InputBox extends Controller {
-    constructor() {
+class InputController extends TodoController {
+    constructor(todoModel, todoView) {
+        super(todoModel, todoView)
         this._todoContainer = e('#id-div-container')
+        this.bindEvent(this._todoContainer, 'keydown', (event) => {
+            const target = event.target
+            if (event.key === 'Enter') {
+                // 失去焦点
+                target.blur()
+                    // 阻止默认行为的发生, 也就是不插入回车
+                event.preventDefault()
+                    // 更新 todo
+                const index = indexOfElement(target.parentElement)
+                    // 把元素在 todoList 中更新
+                this.todoModel.getTodoList()[index].task = target.innerHTML
+                    // todoList.splice(index, 1)
+                this.saveTodos()
+            }
+        })
+    }
+
+}
+
+
+class MainController extends TodoController {
+    constructor(todoModel, todoView) {
+        super(todoModel, todoView)
+        this._todoContainer = e('#id-div-container')
+            // init todos in mian controller
+        this.initTodos()
+        this.bindEvent(this._todoContainer, 'click', (event) => {
+            const target = event.target
+            const todoDiv = target.parentElement
+
+            if (target.classList.contains('todo-done')) {
+                toggleClass(todoDiv, 'done')
+            } else if (target.classList.contains('todo-delete')) {
+                const index = indexOfElement(target.parentElement)
+                todoDiv.remove()
+                this.deleteTodo(index)
+                this.saveTodos()
+            } else if (target.classList.contains('todo-edit')) {
+                const cell = target.parentElement
+                const span = cell.children[3]
+                span.setAttribute('contenteditable', 'true')
+                    // span.contentEditable = true
+                span.focus()
+            }
+        })
     }
 }
+
+
+class BlurController extends TodoController {
+    constructor(todoModel, todoView) {
+        super(todoModel, todoView)
+        this._todoContainer = e('#id-div-container')
+        this.bindEvent(this._todoContainer, 'blur', (event) => {
+            const target = event.target
+            if (target.classList.contains('todo-label')) {
+                // 让 span 不可编辑
+                target.setAttribute('contenteditable', 'false')
+                    // 更新 todo
+                const index = indexOfElement(target.parentElement)
+                    // 把元素在 todoList 中更新
+                this.todoModel.setTodoTask(index, target.innerHTML)
+                    // todoList.splice(index, 1)
+                this.saveTodos()
+            }
+        })
+    }
+}
+
 
 class TodoApp {
     constructor() {
         const todoModel = new TodoModel()
-        const addButtonController = new AddButtonController(todoModel)
+        const todoView = new TodoView()
+        const addButtonController = new AddButtonController(todoModel, todoView)
+        const inputController = new InputController(todoModel, todoView)
+        const mainController = new MainController(todoModel, todoView)
     }
 }
-
 
 const __main = () => {
     const app = new TodoApp()
