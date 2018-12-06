@@ -30,4 +30,15 @@ const toggleClass = (element, className) => {
 }
 
 
-const e = elem => document.querySelector(elem)
+const toogleContent = (element, content1, content2) => {
+    const content = element.innerHTML
+    if (content == content1) {
+        element.innerHTML = content2
+    } else {
+        element.innerHTML = content1
+    }
+}
+
+const e = elm => document.querySelector(elm)
+
+const es = elm => document.querySelectorAll(elm)

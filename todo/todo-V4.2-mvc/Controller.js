@@ -1,3 +1,12 @@
+/**
+ * Todo
+ * 问题:
+ *   1, 如果有 todo 删除, localstorage 无法保存该状态 (完成)
+ *   2, 可以有 完成与未完成的状态, 同时要分别保存到对应的 localstorage, 目前一旦完成就无法修改 (完成)
+ *   3, 根据 2, controller 需要根据 model 里面的数据更新 view, button 名字的改变和 style 样式的改变
+ *   4, 编辑功能无法使用 无法对编辑了 todo 保存
+ */
+
 class TodoController {
     constructor(todoModel, todoView) {
         this.todoModel = todoModel
@@ -10,6 +19,13 @@ class TodoController {
         })
     }
 
+    bindAllEvents(elms, eventName, callback) {
+        for (let i = 0; i < elms.length; i++) {
+            const elm = elms[i];
+            this.bindEvent(elm, eventName, callback)
+        }
+    }
+
     saveTodos() {
         const s = JSON.stringify(this.todoModel.getTodoList())
         localStorage.todoList = s
@@ -18,14 +34,6 @@ class TodoController {
     loadTodos() {
         const s = localStorage.todoList
         return JSON.parse(s)
-    }
-
-    addTodo(todo) {
-        this.todoModel.todoList.push(todo)
-    }
-
-    deleteTodo(index) {
-        this.todoModel.todoList.splice(index, 1)
     }
 
     insertTodo(todo) {
@@ -52,14 +60,20 @@ class AddButtonController extends TodoController {
         super(todoModel, todoView)
         this._elm = e('#id-button-add')
 
+        this.init()
+        this.initTodos()
+    }
+
+    addTodo(todo) {
+        this.todoModel.addTodo(todo)
+    }
+
+    init() {
         this.bindEvent(this._elm, 'click', (event) => {
             const todoInput = e('#id-input-todo')
             const task = todoInput.value
 
-            const todo = {
-                'task': task,
-                'time': currentTime()
-            }
+            const todo = new TodoTaskModel(task)
 
             this.addTodo(todo)
             this.saveTodos(todo)
@@ -69,52 +83,79 @@ class AddButtonController extends TodoController {
 }
 
 
-class InputController extends TodoController {
+class CompleteButtonController extends TodoController {
     constructor(todoModel, todoView) {
         super(todoModel, todoView)
+        this._elms = es('.todo-done')
         this._todoContainer = e('#id-div-container')
-        this.bindEvent(this._todoContainer, 'keydown', (event) => {
+        this.init()
+    }
+
+    init() {
+        this.bindEvent(this._todoContainer, 'click', (event) => {
             const target = event.target
-            if (event.key === 'Enter') {
-                // 失去焦点
-                target.blur()
-                    // 阻止默认行为的发生, 也就是不插入回车
-                event.preventDefault()
-                    // 更新 todo
+            const todoDiv = target.parentElement
+            if (target.classList.contains('todo-done')) {
+                // 更新 View
+                // todo 重构
+                toggleClass(todoDiv, 'done')
+                toogleContent(target, '完成', '未完成')
                 const index = indexOfElement(target.parentElement)
-                    // 把元素在 todoList 中更新
-                this.todoModel.getTodoList()[index].task = target.innerHTML
-                    // todoList.splice(index, 1)
+                    // 更新 Model
+                this.todoModel.toogleTaskDone(index)
+                this.todoModel.toogleButtonDone(index)
+                this.saveTodos()
+            }
+        })
+    }
+}
+
+
+class DeleteButtonController extends TodoController {
+    constructor(todoModel, todoView) {
+        super(todoModel, todoView)
+        this._elms = es('.todo-delete')
+        this._todoContainer = e('#id-div-container')
+
+        this.init()
+    }
+
+    init() {
+        this.bindEvent(this._todoContainer, 'click', (event) => {
+            const target = event.target
+            const todoDiv = target.parentElement
+
+            if (target.classList.contains('todo-delete')) {
+                const index = indexOfElement(target.parentElement)
+                todoDiv.remove()
+                this.deleteTodo(index)
                 this.saveTodos()
             }
         })
     }
 
+    deleteTodo(index) {
+        this.todoModel.deleteTodo(index)
+    }
 }
 
 
-class MainController extends TodoController {
+class EditButtonController extends TodoController {
     constructor(todoModel, todoView) {
         super(todoModel, todoView)
+        this._elms = es('.todo-edit')
         this._todoContainer = e('#id-div-container')
-            // init todos in mian controller
-        this.initTodos()
+
+        this.init()
+    }
+
+    init() {
         this.bindEvent(this._todoContainer, 'click', (event) => {
             const target = event.target
-            const todoDiv = target.parentElement
-
-            if (target.classList.contains('todo-done')) {
-                toggleClass(todoDiv, 'done')
-            } else if (target.classList.contains('todo-delete')) {
-                const index = indexOfElement(target.parentElement)
-                todoDiv.remove()
-                this.deleteTodo(index)
-                this.saveTodos()
-            } else if (target.classList.contains('todo-edit')) {
+            if (target.classList.contains('todo-edit')) {
                 const cell = target.parentElement
                 const span = cell.children[3]
                 span.setAttribute('contenteditable', 'true')
-                    // span.contentEditable = true
                 span.focus()
             }
         })
@@ -122,22 +163,52 @@ class MainController extends TodoController {
 }
 
 
+class InputController extends TodoController {
+    constructor(todoModel, todoView) {
+        super(todoModel, todoView)
+        this._todoContainer = e('#id-div-container')
+
+        this.init()
+    }
+
+    init() {
+        this.bindEvent(this._todoContainer, 'keydown', (event) => {
+            const target = event.target
+            if (event.key === 'Enter') {
+                target.blur()
+                event.preventDefault()
+                const index = indexOfElement(target.parentElement)
+                this.todoModel.getTodoList()[index].task = target.innerHTML
+                this.saveTodos()
+            }
+        })
+    }
+
+}
+
+
 class BlurController extends TodoController {
     constructor(todoModel, todoView) {
         super(todoModel, todoView)
         this._todoContainer = e('#id-div-container')
+
+        this.init()
+    }
+
+    init() {
         this.bindEvent(this._todoContainer, 'blur', (event) => {
+            console.log('blur');
+
             const target = event.target
             if (target.classList.contains('todo-label')) {
-                // 让 span 不可编辑
                 target.setAttribute('contenteditable', 'false')
-                    // 更新 todo
                 const index = indexOfElement(target.parentElement)
-                    // 把元素在 todoList 中更新
-                this.todoModel.setTodoTask(index, target.innerHTML)
-                    // todoList.splice(index, 1)
+                this.todoModel.todoList[index].task = target.innerHTML
+                console.log(this.todoModel.todoList[index]);
+
+                // this.todoModel.setTodoTask(index, target.innerHTML)
                 this.saveTodos()
             }
-        })
+        }, true)
     }
 }

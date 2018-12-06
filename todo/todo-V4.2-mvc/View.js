@@ -3,8 +3,8 @@ class TodoView {
 
     templateTodo(todo) {
         const t = `
-            <div class='todo-cell'>
-                <button class='todo-done'>完成</button>
+            <div class='todo-cell ${todo.isDone}'>
+                <button class='todo-done'>${todo.buttonDone}</button>
                 <button class='todo-delete'>删除</button>
                 <button class='todo-edit'>编辑</button>
                 <span class='todo-label' contenteditable='false'>${todo.task}</span>

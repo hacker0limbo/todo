@@ -66,6 +66,8 @@ var bindEventButton = function() {
 var bindEventBlur = function() {
     var todoContainer = document.querySelector('#id-div-container')
     todoContainer.addEventListener('blur', function(event) {
+        console.log('blur');
+
         var target = event.target
         if (target.classList.contains('todo-label')) {
             // 让 span 不可编辑
