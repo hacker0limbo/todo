@@ -9,6 +9,7 @@ class TodoApp {
         const inputController = new InputController(todoModel, todoView)
         const blurController = new BlurController(todoModel, todoView)
             // const mainController = new MainController(todoModel, todoView)
+        addButtonController.initTodos()
     }
 }
 

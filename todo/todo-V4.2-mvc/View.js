@@ -1,5 +1,8 @@
 class TodoView {
-    constructor() {}
+    constructor() {
+        this._todoContainer = e('#id-div-container')
+        this._todoCells = this._todoContainer.children
+    }
 
     templateTodo(todo) {
         const t = `
@@ -12,5 +15,22 @@ class TodoView {
             </div>
         `
         return t
+    }
+
+    getTodoContainer() {
+        return this._todoContainer
+    }
+
+    // 根据 model 更新视图
+    update(index, todo) {
+        const todoCell = this._todoCells[index]
+        todoCell.className = `todo-cell ${todo.isDone}`
+
+        const todoDone = todoCell.querySelector('.todo-done')
+        todoDone.innerHTML = todo.buttonDone
+
+        // 同理 更新 task
+        const todoTask = todoCell.querySelector('span')
+        todoTask.innerHTML = todo.task
     }
 }

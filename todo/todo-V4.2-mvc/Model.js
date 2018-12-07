@@ -11,6 +11,10 @@ class TodoModel {
         this.todoList = newTodoList
     }
 
+    getTodo(index) {
+        return this.todoList[index]
+    }
+
     setTodoTask(index, content) {
         this.todoList[index].task = content
     }
