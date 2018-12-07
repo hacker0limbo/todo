@@ -29,7 +29,6 @@ class TodoView {
         const todoDone = todoCell.querySelector('.todo-done')
         todoDone.innerHTML = todo.buttonDone
 
-        // 同理 更新 task
         const todoTask = todoCell.querySelector('span')
         todoTask.innerHTML = todo.task
     }

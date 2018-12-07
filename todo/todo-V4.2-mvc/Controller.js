@@ -179,6 +179,7 @@ class InputController extends TodoController {
                 target.blur()
                 event.preventDefault()
                 const index = indexOfElement(target.parentElement)
+                this.todoModel.setTodoTask(index, target.innerHTML)
                 this.todoView.update(index, this.todoModel.getTodo(index))
                 this.saveTodos()
             }
@@ -197,17 +198,16 @@ class BlurController extends TodoController {
     }
 
     init() {
-        this.bindEvent(this._todoContainer, 'blur', (event) => {
+        this.bindEvent(this._todoContainer, 'focusout', (event) => {
 
             const target = event.target
             if (target.classList.contains('todo-label')) {
                 target.setAttribute('contenteditable', 'false')
                 const index = indexOfElement(target.parentElement)
-
+                this.todoModel.setTodoTask(index, target.innerHTML)
                 this.todoView.update(index, this.todoModel.getTodo(index))
-                    // this.todoModel.todoList[index].task = target.innerHTML
                 this.saveTodos()
             }
-        }, true)
+        })
     }
 }
