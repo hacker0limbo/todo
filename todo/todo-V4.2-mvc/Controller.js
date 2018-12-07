@@ -4,7 +4,21 @@
  *   1, 如果有 todo 删除, localstorage 无法保存该状态 (完成)
  *   2, 可以有 完成与未完成的状态, 同时要分别保存到对应的 localstorage, 目前一旦完成就无法修改 (完成)
  *   3, 根据 2, controller 需要根据 model 里面的数据更新 view, button 名字的改变和 style 样式的改变, 最好为 动态更新(object.defineOwnPreperty 之类的)
- *   4, 编辑功能无法使用 无法对编辑了 todo 保存
+ *   4, 编辑功能无法使用 无法对编辑了 todo 保存(完成)
+ *   5, 每个 Controller 里面增加方法: updateModel(), updateView() (完成)
+ *   6, Model 结构分的细一点 类似这样:
+ *          todoCell = {
+ *              style: `todo-cell done`,
+ *              content: {
+ *                  doneButton: {
+ *                      style: xxxx
+ *                      content: xxx
+ *                  },
+ *                  editSpan: {
+ *                      style: xxx
+ *                  }
+ *              }
+ *          }
  */
 
 class TodoController {
@@ -61,7 +75,6 @@ class AddButtonController extends TodoController {
         this._elm = e('#id-button-add')
 
         this.init()
-            // this.initTodos()
     }
 
     addTodo(todo) {
@@ -100,15 +113,22 @@ class CompleteButtonController extends TodoController {
                 // todo 重构
                 const index = indexOfElement(target.parentElement)
                     // 更新 Model
-                this.todoModel.toogleTaskDone(index)
-                this.todoModel.toogleButtonDone(index)
-
-                this.todoView.update(index, this.todoModel.getTodo(index))
-
+                this.updateModel(index)
+                this.updateView(index)
                 this.saveTodos()
             }
         })
     }
+
+    updateModel(index) {
+        this.todoModel.toogleTaskDone(index)
+        this.todoModel.toogleButtonDone(index)
+    }
+
+    updateView(index) {
+        this.todoView.update(index, this.todoModel.getTodo(index))
+    }
+
 }
 
 
@@ -128,15 +148,20 @@ class DeleteButtonController extends TodoController {
 
             if (target.classList.contains('todo-delete')) {
                 const index = indexOfElement(target.parentElement)
-                todoDiv.remove()
-                this.deleteTodo(index)
+                    // todoDiv.remove()
+                this.updateModel(index)
+                this.updateView(todoDiv)
                 this.saveTodos()
             }
         })
     }
 
-    deleteTodo(index) {
+    updateModel(index) {
         this.todoModel.deleteTodo(index)
+    }
+
+    updateView(todoCell) {
+        this.todoView.removeTodoCell(todoCell)
     }
 }
 
@@ -156,10 +181,14 @@ class EditButtonController extends TodoController {
             if (target.classList.contains('todo-edit')) {
                 const cell = target.parentElement
                 const span = cell.children[3]
-                span.setAttribute('contenteditable', 'true')
-                span.focus()
+                this.updateView(span)
             }
         })
+    }
+
+    updateView(span) {
+        span.setAttribute('contenteditable', 'true')
+        span.focus()
     }
 }
 
@@ -179,13 +208,20 @@ class InputController extends TodoController {
                 target.blur()
                 event.preventDefault()
                 const index = indexOfElement(target.parentElement)
-                this.todoModel.setTodoTask(index, target.innerHTML)
-                this.todoView.update(index, this.todoModel.getTodo(index))
+                this.updateModel(index, target.innerHTML)
+                this.updateView(index)
                 this.saveTodos()
             }
         })
     }
 
+    updateModel(index, content) {
+        this.todoModel.setTodoTask(index, content)
+    }
+
+    updateView(index) {
+        this.todoView.update(index, this.todoModel.getTodo(index))
+    }
 }
 
 
@@ -202,12 +238,23 @@ class BlurController extends TodoController {
 
             const target = event.target
             if (target.classList.contains('todo-label')) {
-                target.setAttribute('contenteditable', 'false')
+                // target.setAttribute('contenteditable', 'false')
                 const index = indexOfElement(target.parentElement)
-                this.todoModel.setTodoTask(index, target.innerHTML)
-                this.todoView.update(index, this.todoModel.getTodo(index))
+                    // this.todoModel.setTodoTask(index, target.innerHTML)
+                    // this.todoView.update(index, this.todoModel.getTodo(index))
+                this.updateModel(index, target.innerHTML)
+                this.updateView(index, target)
                 this.saveTodos()
             }
         })
+    }
+
+    updateModel(index, content) {
+        this.todoModel.setTodoTask(index, content)
+    }
+
+    updateView(index, elm) {
+        elm.setAttribute('contenteditable', 'false')
+        this.todoView.update(index, this.todoModel.getTodo(index))
     }
 }

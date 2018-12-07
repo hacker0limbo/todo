@@ -21,7 +21,6 @@ class TodoView {
         return this._todoContainer
     }
 
-    // 根据 model 更新视图
     update(index, todo) {
         const todoCell = this._todoCells[index]
         todoCell.className = `todo-cell ${todo.isDone}`
@@ -31,5 +30,9 @@ class TodoView {
 
         const todoTask = todoCell.querySelector('span')
         todoTask.innerHTML = todo.task
+    }
+
+    removeTodoCell(todoCell) {
+        todoCell.remove()
     }
 }

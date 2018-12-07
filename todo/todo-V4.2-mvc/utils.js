@@ -41,4 +41,4 @@ const toogleContent = (element, content1, content2) => {
 
 const e = elm => document.querySelector(elm)
 
-const es = elm => document.querySelectorAll(elm)
+const es = elms => document.querySelectorAll(elms)
