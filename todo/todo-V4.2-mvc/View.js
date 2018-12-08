@@ -10,7 +10,7 @@ class TodoView {
                 <button class='todo-done'>${todo.buttonDone}</button>
                 <button class='todo-delete'>删除</button>
                 <button class='todo-edit'>编辑</button>
-                <span class='todo-label' contenteditable='false'>${todo.task}</span>
+                <span class='todo-label' contenteditable=${todo.isContenteditable}>${todo.task}</span>
                 <span>${todo.time}</span>
             </div>
         `
@@ -22,7 +22,15 @@ class TodoView {
     }
 
     update(index, todo) {
+
         const todoCell = this._todoCells[index]
+
+        if (todo == null) {
+            // no to do has been passed means todo has been delete in the model
+            todoCell.remove()
+            return
+        }
+
         todoCell.className = `todo-cell ${todo.isDone}`
 
         const todoDone = todoCell.querySelector('.todo-done')
@@ -30,6 +38,9 @@ class TodoView {
 
         const todoTask = todoCell.querySelector('span')
         todoTask.innerHTML = todo.task
+
+        todoTask.setAttribute('contenteditable', todo.isContenteditable)
+
     }
 
     removeTodoCell(todoCell) {

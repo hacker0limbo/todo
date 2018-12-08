@@ -35,12 +35,16 @@ class TodoModel {
         }
     }
 
-    toogleButtonDone(index) {
-        if (this.todoList[index].buttonDone == '完成') {
-            this.todoList[index].buttonDone = '未完成'
-        } else {
+    setButtonDone(index) {
+        if (this.todoList[index].isDone == '') {
             this.todoList[index].buttonDone = '完成'
+        } else {
+            this.todoList[index].buttonDone = '未完成'
         }
+    }
+
+    setTaskContenteditable(index, isEditable) {
+        this.todoList[index].isContenteditable = isEditable
     }
 }
 
@@ -51,5 +55,32 @@ class TodoTaskModel {
         this.time = currentTime()
         this.isDone = ''
         this.buttonDone = '完成'
+        this.isContenteditable = 'false'
+
+        // this.vDom = {
+        //     attr: `class='todo-cell ${this.isDone} ${this.isExist}'`,
+        //     children: {
+        //         doneButton: {
+        //             attr: `class='todo-done'`,
+        //             children: this.buttonDone,
+        //         },
+        //         deleteButton: {
+        //             attr: `class='todo-done'`,
+        //             children: '删除',
+        //         },
+        //         editButton: {
+        //             attr: `class='todo-edit'`,
+        //             children: '编辑',
+        //         },
+        //         editSpan: {
+        //             attr: `class='todo-label' contenteditable=${this.isContenteditable}`,
+        //             children: this.task,
+        //         },
+        //         timeSpan: {
+        //             attr: '',
+        //             children: this.time,
+        //         },
+        //     }
+        // }
     }
 }

@@ -109,10 +109,7 @@ class CompleteButtonController extends TodoController {
             const target = event.target
             const todoDiv = target.parentElement
             if (target.classList.contains('todo-done')) {
-                // 更新 View
-                // todo 重构
                 const index = indexOfElement(target.parentElement)
-                    // 更新 Model
                 this.updateModel(index)
                 this.updateView(index)
                 this.saveTodos()
@@ -122,7 +119,7 @@ class CompleteButtonController extends TodoController {
 
     updateModel(index) {
         this.todoModel.toogleTaskDone(index)
-        this.todoModel.toogleButtonDone(index)
+        this.todoModel.setButtonDone(index)
     }
 
     updateView(index) {
@@ -147,10 +144,9 @@ class DeleteButtonController extends TodoController {
             const todoDiv = target.parentElement
 
             if (target.classList.contains('todo-delete')) {
-                const index = indexOfElement(target.parentElement)
-                    // todoDiv.remove()
+                const index = indexOfElement(todoDiv)
                 this.updateModel(index)
-                this.updateView(todoDiv)
+                this.updateView(index)
                 this.saveTodos()
             }
         })
@@ -160,8 +156,8 @@ class DeleteButtonController extends TodoController {
         this.todoModel.deleteTodo(index)
     }
 
-    updateView(todoCell) {
-        this.todoView.removeTodoCell(todoCell)
+    updateView(index) {
+        this.todoView.update(index, this.todoModel.getTodo(index))
     }
 }
 
@@ -180,15 +176,22 @@ class EditButtonController extends TodoController {
             const target = event.target
             if (target.classList.contains('todo-edit')) {
                 const cell = target.parentElement
+                const index = indexOfElement(cell)
                 const span = cell.children[3]
-                this.updateView(span)
+                this.updateModel(index)
+                this.updateView(index)
+                this.saveTodos()
+                span.focus()
             }
         })
     }
 
-    updateView(span) {
-        span.setAttribute('contenteditable', 'true')
-        span.focus()
+    updateModel(index) {
+        this.todoModel.setTaskContenteditable(index, 'true')
+    }
+
+    updateView(index) {
+        this.todoView.update(index, this.todoModel.getTodo(index))
     }
 }
 
@@ -238,10 +241,7 @@ class BlurController extends TodoController {
 
             const target = event.target
             if (target.classList.contains('todo-label')) {
-                // target.setAttribute('contenteditable', 'false')
                 const index = indexOfElement(target.parentElement)
-                    // this.todoModel.setTodoTask(index, target.innerHTML)
-                    // this.todoView.update(index, this.todoModel.getTodo(index))
                 this.updateModel(index, target.innerHTML)
                 this.updateView(index, target)
                 this.saveTodos()
@@ -250,11 +250,11 @@ class BlurController extends TodoController {
     }
 
     updateModel(index, content) {
+        this.todoModel.setTaskContenteditable(index, 'false')
         this.todoModel.setTodoTask(index, content)
     }
 
-    updateView(index, elm) {
-        elm.setAttribute('contenteditable', 'false')
+    updateView(index) {
         this.todoView.update(index, this.todoModel.getTodo(index))
     }
 }
