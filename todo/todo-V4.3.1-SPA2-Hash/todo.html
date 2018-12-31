@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>todo应用</title>
+    <style media="screen">
+        .done {
+            background-color: aquamarine;
+            color: gray;
+            text-decoration: line-through;
+        }
+        
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="todo-main">
+        <!-- todo 选项卡 -->
+        <div class="todo-tab">
+            <a href="#/list"><button>显示 Todo List 界面</button></a>
+            <a href="#/add"><button>显示 Todo Add 界面</button></a>
+        </div>
+        <!-- todo 输入框 -->
+        <div class="todo-form">
+            <input id='id-input-todo' type="text">
+            <button id='id-button-add' type="button">Add</button>
+        </div>
+        <!-- todo 列表 -->
+        <div id="id-div-container">
+        </div>
+    </div>
+    <script src="utils.js"></script>
+    <script src="Router.js"></script>
+    <script src="Model.js"></script>
+    <script src="View.js"></script>
+    <script src="Controller.js"></script>
+    <script src="todo.js"></script>
+</body>
+
+</html>
