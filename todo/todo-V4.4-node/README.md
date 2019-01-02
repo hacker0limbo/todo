@@ -10,4 +10,6 @@ node app.js
 
 // 或者使用 supervisor
 supervisor app.js
+
+// 然后访问 localhost:3000
 ```

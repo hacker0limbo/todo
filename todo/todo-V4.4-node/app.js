@@ -15,6 +15,11 @@ class TodoModel {
         return this.todoList
     }
 
+    getTodo(id) {
+        const index = id - 1
+        return this.todoList[index]
+    }
+
     add(todo) {
         this.todoList.push(todo)
     }
@@ -62,15 +67,15 @@ app.get('/', (req, res) => {
 
 app.get('/todo/all', (req, res) => {
     // 这里的 todos 最好是从一个文件中读取数据
-    const todos = JSON.stringify(todoList)
-    res.send(todos)
+    // const todos = JSON.stringify(todoList)
+    res.json(todoList)
 })
 
-const sendRes = function(res, todo) {
-    // 用于将接受的数据转为 JSON 格式的字符串以后返回给前端
-    const resData = JSON.stringify(todo)
-    res.send(resData)
-}
+app.get('/todo/delete/:id', (req, res) => {
+    const todoId = req.params.id
+    const todo = todoModel.getTodo(todoId)
+    res.json(todo)
+})
 
 app.post('/todo/add', (req, res) => {
     const newTodo = req.body
@@ -78,7 +83,8 @@ app.post('/todo/add', (req, res) => {
 
     todoModel.add(newTodo)
 
-    sendRes(res, newTodo)
+    res.json(newTodo)
+        // sendRes(res, newTodo)
 })
 
 
