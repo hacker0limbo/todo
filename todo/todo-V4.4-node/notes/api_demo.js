@@ -1,25 +1,12 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const fs = require('fs')
 
 app.use(bodyParser.json())
 app.use(express.static('public'))
 
-const TODOS = [{
-    id: 1,
-    task: '吃饭',
-    isDone: false,
-}, {
-    id: 2,
-    task: '睡觉',
-    isDone: false,
-}, {
-    id: 3,
-    task: '写代码',
-    isDone: false,
-}]
-
+const model = require('./model.js')
+const TODOS = model.TODOS
 
 const updateId = () => {
     for (let i = 0; i < TODOS.length; i++) {
@@ -28,20 +15,11 @@ const updateId = () => {
     }
 }
 
-const sendHtml = function(path, res) {
-    const options = {
-        encoding: 'utf-8',
-    }
-    fs.readFile(path, options, (err, data) => {
-        console.log(`读取的html文件 ${path} 内容是`, data)
-        res.send(data)
-    })
-}
-
-
 app.get('/', (req, res) => {
-    const path = './public/index.html'
-    sendHtml(path, res)
+    const options = {
+        root: __dirname + '/public/',
+    }
+    res.sendFile('index.html', options)
 })
 
 app.get('/todo/all', (req, res) => {
