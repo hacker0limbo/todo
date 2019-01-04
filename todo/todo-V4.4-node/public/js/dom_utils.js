@@ -31,3 +31,27 @@ const toogleContent = (element, content1, content2) => {
 const e = elm => document.querySelector(elm)
 
 const es = elms => document.querySelectorAll(elms)
+
+const removeAll = function(sel) {
+    let tags = document.querySelectorAll(sel)
+    for (let i = 0; i < tags.length; i++) {
+        let tag = tags[i]
+        tag.remove()
+    }
+}
+
+const appendHtml = function(element, html) {
+    element.insertAdjacentHTML('beforeend', html)
+}
+
+const bindEvent = function(element, eventName, callback) {
+    element.addEventListener(eventName, callback)
+}
+
+const bindAll = function(selector, eventName, callback) {
+    var elements = document.querySelectorAll(selector)
+    for (var i = 0; i < elements.length; i++) {
+        var e = elements[i]
+        bindEvent(e, eventName, callback)
+    }
+}

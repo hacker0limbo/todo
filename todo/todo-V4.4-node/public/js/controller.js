@@ -98,14 +98,14 @@ class CompleteButtonController extends TodoController {
                     })
                     .then((data) => {
                         console.log('完成的数据为', data)
-                        this.updateView(index, data)
+                        this.updateView(data)
                     })
             }
         })
     }
 
-    updateView(index, data) {
-        this.todoView.update(index, data)
+    updateView(data) {
+        this.todoView.finishTodo(data)
     }
 
 }
@@ -144,4 +144,55 @@ class DeleteButtonController extends TodoController {
     updateView(index) {
         this.todoView.removeTodo(index)
     }
+}
+
+
+class EditButtonController extends TodoController {
+    constructor(todoView) {
+        super(todoView)
+        this._elms = es('.todo-edit')
+        this._todoContainer = this.todoView.getTodoContainer()
+        this.init()
+    }
+
+    init() {
+        this.bindEvent(this._todoContainer, 'click', (event) => {
+            const target = event.target
+            const todoDiv = target.parentElement
+
+            if (target.classList.contains('todo-edit')) {
+                const index = indexOfElement(todoDiv)
+                const id = index + 1
+
+                const p = new Prompt('输入更新数据', (r, value) => {
+                    if (r) {
+                        const updateData = {
+                            task: value,
+                        }
+
+                        fetch(`/todo/update/${id}`, {
+                                method: 'POST',
+                                body: JSON.stringify(updateData),
+                                headers: new Headers({
+                                    'Content-Type': 'application/json'
+                                })
+                            })
+                            .then(res => res.json())
+                            .then((data) => {
+                                this.updateView(data)
+                                console.log('更新的数据为', data)
+                            })
+                    } else {
+                        console.log('用户点了 cancel 取消输入')
+                    }
+                })
+            }
+        })
+    }
+
+    updateView(todo) {
+        this.todoView.editTodo(todo)
+    }
+
+
 }

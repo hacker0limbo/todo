@@ -21,15 +21,9 @@ class TodoView {
         return this._todoContainer
     }
 
-    update(index, todo) {
-
+    finishTodo(todo) {
+        const index = todo.id - 1
         const todoCell = this._todoCells[index]
-
-        // if (todo == null) {
-        //     // no to do has been passed means todo has been delete in the model
-        //     todoCell.remove()
-        //     return
-        // }
 
         if (todo.isDone == true) {
             todoCell.className = `todo-cell done`
@@ -37,12 +31,18 @@ class TodoView {
             todoCell.className = `todo-cell not-done`
         }
 
-        const todoTask = todoCell.querySelector('span')
-        todoTask.innerHTML = todo.task
     }
 
     removeTodo(index) {
         const todoCell = this._todoCells[index]
         todoCell.remove()
+    }
+
+    editTodo(todo) {
+        const index = todo.id - 1
+        const todoCell = this._todoCells[index]
+        const todoLabel = todoCell.querySelector('.todo-label')
+
+        todoLabel.innerHTML = todo.task
     }
 }
