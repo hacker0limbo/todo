@@ -6,8 +6,8 @@ class TodoView {
 
     templateTodo(todo) {
         const t = `
-            <div class='todo-cell not-done'>
-                <button class='todo-done'></button>
+            <div class="todo-cell ${todo.isDone ? 'done' : 'not-done'}">
+                <input type="checkbox" class="todo-done" ${todo.isDone ? 'checked' : ''}></input>
                 <button class='todo-delete'>删除</button>
                 <button class='todo-edit'>编辑</button>
                 <span class='todo-label' contenteditable=false>${todo.task}</span>
@@ -24,13 +24,15 @@ class TodoView {
     finishTodo(todo) {
         const index = todo.id - 1
         const todoCell = this._todoCells[index]
+        const checkBox = todoCell.querySelector('.todo-done')
 
         if (todo.isDone == true) {
             todoCell.className = `todo-cell done`
+            checkBox.checked = true
         } else {
             todoCell.className = `todo-cell not-done`
+            checkBox.checked = false
         }
-
     }
 
     removeTodo(index) {

@@ -1,6 +1,5 @@
 const model = require('../models/model.js')
 const utils = require('../utils/utils.js')
-
 const todoModel = model.todoModel
 const todoTaskModel = model.TodoTaskModel
 
@@ -27,7 +26,7 @@ module.exports = (app) => {
         todoModel.addTodo(newTodo)
 
         // 写入数据文件中
-        // todoModel.saveTodos()
+        todoModel.saveTodos()
         res.json(newTodo)
     })
 
@@ -37,12 +36,12 @@ module.exports = (app) => {
         const index = todoId - 1
         const todo = todoModel.getTodo(index)
 
+        // 错误
         todoModel.deleteTodo(index)
             // 更新 todo id
-        utils.updateId(todoModel)
-
-        // 写入数据文件中
-        // todoModel.saveTodos()
+        utils.updateId(todoModel.getTodoList())
+            // 写入数据文件中
+        todoModel.saveTodos()
         res.json(todo)
     })
 
@@ -57,7 +56,7 @@ module.exports = (app) => {
         todoModel.setTodoTask(index, newTask)
 
         // 写入数据文件中
-        // todoModel.saveTodos()
+        todoModel.saveTodos()
         res.json(todo)
     })
 
@@ -68,7 +67,7 @@ module.exports = (app) => {
 
         todoModel.toogleTaskDone(index)
             // 写入数据文件中
-            // todoModel.saveTodos()
+        todoModel.saveTodos()
         res.json(todo)
     })
 
