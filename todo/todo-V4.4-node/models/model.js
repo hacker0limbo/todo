@@ -3,29 +3,22 @@
  */
 const fs = require('fs')
 const utils = require('../utils/utils.js')
-const path = require('path')
 
 class TodoModel {
     constructor() {
         this.todoList = []
         this.dataFile = './models/data.txt'
+        this.loadTodos()
     }
 
     getTodoList() {
         return this.todoList
     }
 
-    loadTodos(callback) {
-        fs.readFile(this.dataFile, 'utf8', (err, data) => {
-            // readFile 路径为当前进程所在路径(process.pwd()), 而非脚本运行时所在的进程
-            // 同时注意 readFile 为异步调用, 必须指定回调函数才能在读取文件以后得到或者操作数据
-            if (err) {
-                console.log(err);
-            } else {
-                this.todoList = JSON.parse(data)
-                callback()
-            }
-        })
+    loadTodos() {
+        // 在初始化的时候同步读取数据
+        const data = fs.readFileSync(this.dataFile, 'utf8')
+        this.todoList = JSON.parse(data)
     }
 
     saveTodos() {
@@ -60,10 +53,10 @@ class TodoModel {
     }
 
     toogleTaskDone(index) {
-        if (this.todoList[index].isDone == '') {
-            this.todoList[index].isDone = 'done'
+        if (this.todoList[index].isDone == false) {
+            this.todoList[index].isDone = true
         } else {
-            this.todoList[index].isDone = ''
+            this.todoList[index].isDone = false
         }
     }
 
@@ -82,10 +75,11 @@ class TodoModel {
 
 
 class TodoTaskModel {
-    constructor(task) {
+    constructor(id, task) {
+        this.id = id
         this.task = task
         this.time = utils.currentTime()
-        this.isDone = ''
+        this.isDone = false
             // this.buttonDone = '完成'
             // this.isContenteditable = 'false'
     }

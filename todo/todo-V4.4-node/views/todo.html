@@ -27,11 +27,14 @@
     </div>
     <script src="./js/dom_utils.js"></script>
     <script src="./js/router.js"></script>
+    <script src="./js/view.js"></script>
+    <script src="./js/controller.js"></script>
     <!-- <script src="Model.js"></script>
     <script src="View.js"></script>
     <script src="Controller.js"></script>
     <script src="todo.js"></script> -->
     <script>
+        // router
         const router = new Router();
         const todoForm = e('.todo-form')
         const todoContainer = e('#id-div-container')
@@ -47,7 +50,17 @@
                 todoForm.classList.remove('hide')
             }
         })
+
+        // controller and views
+        const todoView = new TodoView()
+        const controller = new TodoController(todoView)
+        const addButtonController = new AddButtonController(todoView)
+        const completeButtonController = new CompleteButtonController(todoView)
+        const deleteButtonController = new DeleteButtonController(todoView)
+
+        controller.initTodos()
     </script>
+
 </body>
 
 </html>
