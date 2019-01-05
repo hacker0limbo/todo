@@ -193,6 +193,40 @@ class EditButtonController extends TodoController {
     updateView(todo) {
         this.todoView.editTodo(todo)
     }
+}
 
 
+class ShowFinishController extends TodoController {
+    constructor(todoView) {
+        super(todoView)
+        this._elm = e('a[href="#/finish"]')
+        this._todoContainer = this.todoView.getTodoContainer()
+        this.init()
+    }
+
+    init() {
+        this.bindEvent(this._elm, 'click', (event) => {
+            const target = event.target
+
+            fetch('/todo/all')
+                .then((res) => {
+                    return res.json()
+                })
+                .then((data) => {
+                    // [{isDone: true}, {isDone: false}]
+                    const todos = data.filter(todo => todo['isDone'] != true)
+                    const actions = todos.map(todo => todo['task'])
+
+                    new Tab('未完成的任务', actions, (index) => {
+                        if (index == -1) {
+                            console.log('用户点击了取消')
+                        } else {
+                            // es('.modal-action-button')[index].classList.add('shake')
+                            console.log('点击了', actions[index]);
+
+                        }
+                    })
+                })
+        })
+    }
 }

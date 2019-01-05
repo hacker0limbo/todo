@@ -22,5 +22,6 @@
         const completeButtonController = new CompleteButtonController(todoView)
         const deleteButtonController = new DeleteButtonController(todoView)
         const editButtonController = new EditButtonController(todoView)
+        const showFinishController = new ShowFinishController(todoView)
 
         controller.initTodos()

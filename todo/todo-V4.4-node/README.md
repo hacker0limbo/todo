@@ -2,6 +2,10 @@
 
 使用 express 搭建后端 api, 前端使用 fetch 获取数据
 
+Demo: 
+
+![demo](demo/demo.gif)
+
 ## 安装方法
 
 ```js
