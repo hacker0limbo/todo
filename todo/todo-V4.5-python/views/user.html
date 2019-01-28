@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理中心</title>
+</head>
+<body>
+    <h1>所有用户信息</h1>
+    <div>{{users}}</div>
+    <form action="/admin/users/update" method="post">
+        <input type="text" name="id" placeholder="请输入需要更改的用户id">
+        <br>
+        <input type="text" name="password" placeholder="请输入需要更改的用户密码">
+        <br>
+        <button type="submit">修改</button>
+    </form>
+</body>
+</html>
