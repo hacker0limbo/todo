@@ -1,4 +1,5 @@
 from models import Model
+import time
 
 
 class Todo(Model):
@@ -7,13 +8,37 @@ class Todo(Model):
         self.id = form.get('id', None)
         self.title = form.get('title', '')
         self.completed = form.get('completed', False)
+        self.created_time = form.get('created_time', None)
+        self.updated_time = form.get('updated_time', None)
+        if form.get('created_time', None) is None:
+            self.created_time = int(time.time())
+            self.updated_time = self.created_time
+
+    def ct(self):
+        """
+        得到格式化后的创建时间
+        """
+        f = '%H:%M:%S'
+        value = time.localtime(self.created_time)
+        dt = time.strftime(f, value)
+        return dt
+
+    def ut(self):
+        f = '%H:%M:%S'
+        value = time.localtime(self.updated_time)
+        dt = time.strftime(f, value)
+        return dt
 
     @classmethod
     def update(cls, id, title):
+        """
+        更新一个 todo
+        """
         todos = cls.all()
         for t in todos:
             if t.id == id:
                 t.title = title
+                t.updated_time = int(time.time())
                 break
         cls.save(todos)
 
