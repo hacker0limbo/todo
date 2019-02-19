@@ -1,4 +1,5 @@
 import random
+import time
 
 
 def random_str():
@@ -11,3 +12,10 @@ def random_str():
         random_index = random.randint(0, len(seed) - 2)
         s += seed[random_index]
     return s
+
+
+def current_time(ct):
+    format = '%H:%M:%S'
+    value = time.localtime(ct)
+    dt = time.strftime(format, value)
+    return dt
