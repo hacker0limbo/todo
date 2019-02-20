@@ -27,4 +27,4 @@ def add():
 @todo_bp.route('/delete/<int:todo_id>')
 def delete(todo_id):
     Todo.delete(todo_id)
-    return redirect('todo.index')
+    return redirect(url_for('todo.index'))

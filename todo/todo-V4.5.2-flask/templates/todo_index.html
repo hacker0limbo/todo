@@ -28,13 +28,15 @@
         </thead>
         <tbody>
         {% for t in todos %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ t.title }}</td>
-                <td>{{ t.format_time() }}</td>
-                <!-- url_for 可以传递参数，先匹配动态路由，如果动态路由匹配失败则变成 query 参数 -->
-                <td><a href={{ url_for('todo.delete', todo_id=t.id) }}>delete</a></td>
-            </tr>
+            {% if t.completed is sameas false %}
+                <tr>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.title }}</td>
+                    <td>{{ t.format_time() }}</td>
+                    <!-- url_for 可以传递参数，先匹配动态路由，如果动态路由匹配失败则变成 query 参数 -->
+                    <td><a href={{ url_for('todo.delete', todo_id=t.id) }}>delete</a></td>
+                </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>
