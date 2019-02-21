@@ -15,6 +15,14 @@ source activate [环境]
 
 `db.create_all()` 只创建不存在的表, `db.drop_all()`删除数据, 表还是存在
 
+### db 和 app 的引用问题
+
+具体参见: https://segmentfault.com/q/1010000018204985
+
+几个点:
+- db 在 models 里面创建, app.py 里面引入 db, 使用 db.init_app(app) 来初始化 app 和 数据库, 而不是使用 db = SQLAlchemy(app) 来初始化数据库
+- 在 app.py 里面需要引入 model 里面的 ORM 类, 这样在使用 db.create_all() 时才可以正常创建所有的数据, 因此也必须将 db 和 app 分开, 否则会造成包的循环引入 
+
 ## endpoint 端点
 flask 中 映射为: URL -> 端点(endpoint) -> 视图函数, 通常端点名和视图函数一样, 比如:
 
@@ -99,8 +107,40 @@ Flask 自动添加一个 static 视图，视图使用相对于 flask/static 的�
 <link rel="stylesheet" type="text/css" href="static/css/main.css">
 ```
 
+## flask_sqlalchemy
+
+常用的数据库字段: Integer, String(size), DateTime, Bollean
+如果修改了类的结构, 需要使用 db.drop_all() 删除所有数据
+
+## jinjia 模板
+
+flask 里面的 `render_template()` 函数会把作用域里面的变量都传入进去, 所以比如可以调用`url_for()`
+
+## request 变量
+
+- 导入进来以后每一个路由里面的 request 都是一个局部变量, 每次都开了一个新的进程, 所以不同的 request 不会互相干扰
+- request.form 得到所有的数据, 如果使用 get 方法, 数据从 request.args 里面获取
+
+## 部署
+
+参见: https://spacewander.github.io/explore-flask-zh/13-deployment.html
+
+可以直接使用 gunicorn 部署程序, -D 可以守护进程放入后台
+
+## 时间格式化
+
+参见 utils.py 里面的 `current_time()` 函数,
+```python
+import time
+def current_time(ct):
+    format = '%H:%M:%S'
+    value = time.localtime(ct)
+    dt = time.strftime(format, value)
+    return dt
+```
+
 ## Reference
 - https://stackoverflow.com/questions/16351826/link-to-flask-static-files-with-url-for
 - https://www.jianshu.com/p/808917d76b51
-
+- https://spacewander.github.io/explore-flask-zh/13-deployment.html
 - https://stackoverflow.com/questions/34807235/why-sqlalchemy-create-all-can-be-reused(`create_all()`)
