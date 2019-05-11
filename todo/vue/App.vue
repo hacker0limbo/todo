@@ -10,7 +10,7 @@
 
 module.exports = {
     components: {
-        "todo-list": httpVueLoader("/components/TodoList.vue")
+        "todo-list": httpVueLoader("components/TodoList.vue")
     }
 };
 </script>

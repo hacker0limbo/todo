@@ -1,7 +1,9 @@
 <template>
     <div>
         <input type="text" :value="value" v-on="listeners" />
-        <button @click="$emit('add')">Add</button>
+        <button @click="$emit('add')" class="btn btn-primary btn-sm">
+            Add
+        </button>
     </div>
 </template>
 
@@ -28,8 +30,12 @@ module.exports = {
 </script>
 
 <style scoped>
+div {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
 input {
-    width: 80%;
     padding: 8px 10px;
     border: 1px solid blue;
 }

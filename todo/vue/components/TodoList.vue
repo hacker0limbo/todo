@@ -1,7 +1,15 @@
 <template>
     <div>
-        <ul v-if="todos.length">
-            <!-- 父组件可以监听子组件的事件, 比如这里的 remove 事件, complete 事件 -->
+        <div>
+            <todo-list-input
+                v-model="newTodoText"
+                placeholder="New todo"
+                @keydown.enter="addTodo"
+                @add="addTodo"
+            />
+        </div>
+        <!-- 父组件可以监听子组件的事件, 比如这里的 remove 事件, complete 事件 -->
+        <div v-if="todos.length">
             <todo-list-item
                 v-for="todo in todos"
                 :key="todo.id"
@@ -9,16 +17,8 @@
                 @remove="removeTodo"
                 @complete="completeTodo"
             />
-        </ul>
-        <p v-else>
-            Nothing left in the list. Add a new todo in the input above.
-        </p>
-        <todo-list-input
-            v-model="newTodoText"
-            placeholder="New todo"
-            @keydown.enter="addTodo"
-            @add="addTodo"
-        />
+        </div>
+        <p v-else>No todo in Todo List, please add new todo</p>
     </div>
 </template>
 
@@ -26,42 +26,40 @@
 // import BaseInputText from "./TodoListInput.vue";
 // import TodoListItem from "./TodoListItem.vue";
 
-let nextTodoId = 1;
-
 module.exports = {
     components: {
-        "todo-list-input": httpVueLoader("/components/TodoListInput.vue"),
-        "todo-list-item": httpVueLoader("/components/TodoListItem.vue")
+        "todo-list-input": httpVueLoader("components/TodoListInput.vue"),
+        "todo-list-item": httpVueLoader("components/TodoListItem.vue")
     },
 
     data() {
         return {
             newTodoText: "",
-            todos: [
-                {
-                    id: nextTodoId++,
-                    text: "Learn Vue",
-                    done: false
-                },
-                {
-                    id: nextTodoId++,
-                    text: "Learn about single-file components",
-                    done: true
-                },
-                {
-                    id: nextTodoId++,
-                    text: "Fall in love",
-                    done: false
-                }
-            ]
+            todos: this.loadTodos()
         };
     },
+
+    watch: {
+        todos: {
+            handler(newTodos, oldTodos) {
+                // update id
+                newTodos.forEach((todo, index) => {
+                    todo.id = index;
+                });
+                todos = JSON.stringify(newTodos);
+                window.localStorage.setItem("todos", todos);
+            },
+            // 使用 deep 进行深度监听
+            deep: true
+        }
+    },
+
     methods: {
         addTodo() {
             const trimmedText = this.newTodoText.trim();
             if (trimmedText) {
                 this.todos.push({
-                    id: nextTodoId++,
+                    id: Number(this.todos.length),
                     text: trimmedText,
                     done: false
                 });
@@ -75,6 +73,12 @@ module.exports = {
         },
         completeTodo(todo) {
             todo.done = !todo.done;
+        },
+        loadTodos() {
+            if (window.localStorage.getItem("todos") === null) {
+                return [];
+            }
+            return JSON.parse(window.localStorage.getItem("todos"));
         }
     }
 };
