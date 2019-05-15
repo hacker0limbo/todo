@@ -10,15 +10,20 @@
         </div>
         <!-- 父组件可以监听子组件的事件, 比如这里的 remove 事件, complete 事件 -->
         <div v-if="todos.length">
-            <todo-list-item
-                v-for="todo in todos"
-                :key="todo.id"
-                :todo="todo"
-                @remove="removeTodo"
-                @complete="completeTodo"
-            />
+            <transition-group name="todo-list-complete" tag="p">
+                <todo-list-item
+                    v-for="todo in todos"
+                    :key="todo.id"
+                    :todo="todo"
+                    @remove="removeTodo"
+                    @complete="completeTodo"
+                    class="todo-list-complete-item"
+                />
+            </transition-group>
         </div>
-        <p v-else>No todo in Todo List, please add new todo</p>
+        <p v-else class="alert alert-primary" role="alert">
+            No todo in Todo List, please add new todo
+        </p>
     </div>
 </template>
 
@@ -42,10 +47,6 @@ module.exports = {
     watch: {
         todos: {
             handler(newTodos, oldTodos) {
-                // update id
-                newTodos.forEach((todo, index) => {
-                    todo.id = index;
-                });
                 todos = JSON.stringify(newTodos);
                 window.localStorage.setItem("todos", todos);
             },
@@ -55,11 +56,20 @@ module.exports = {
     },
 
     methods: {
+        uniqueID() {
+            return (
+                "_" +
+                Math.random()
+                    .toString(36)
+                    .substr(2, 9)
+            );
+        },
+
         addTodo() {
             const trimmedText = this.newTodoText.trim();
             if (trimmedText) {
                 this.todos.push({
-                    id: Number(this.todos.length),
+                    id: this.uniqueID(),
                     text: trimmedText,
                     done: false
                 });
@@ -67,9 +77,7 @@ module.exports = {
             }
         },
         removeTodo(idToRemove) {
-            this.todos = this.todos.filter(todo => {
-                return todo.id !== idToRemove;
-            });
+            this.todos = this.todos.filter(todo => todo.id != idToRemove);
         },
         completeTodo(todo) {
             todo.done = !todo.done;
@@ -83,3 +91,19 @@ module.exports = {
     }
 };
 </script>
+
+<style scoped>
+.todo-list-complete-item {
+    transition: all 1s;
+}
+.todo-list-complete-enter,
+.todo-list-complete-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.todo-list-complete-leave-active {
+    width: 380px;
+    position: absolute;
+}
+</style>

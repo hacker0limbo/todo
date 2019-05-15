@@ -31,12 +31,14 @@ module.exports = {
 
 <style scoped>
 div {
-    border: 1px solid lightblue;
+    border: 1px solid blue;
     border-radius: 5px;
     margin: 10px;
     padding: 10px;
 }
+
 .done {
+    border: 1px solid lightblue;
     text-decoration: line-through;
     color: grey;
 }
