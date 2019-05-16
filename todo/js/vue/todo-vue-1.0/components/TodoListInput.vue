@@ -1,6 +1,11 @@
 <template>
     <div>
-        <input type="text" :value="value" v-on="listeners" />
+        <input
+            type="text"
+            :value="value"
+            v-on="listeners"
+            placeholder="Add new todo"
+        />
         <button @click="$emit('add')" class="btn btn-primary btn-sm">
             Add
         </button>

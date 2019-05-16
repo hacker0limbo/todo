@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO 程序</title>
+</head>
+<body>
+    <h1>TODO</h1>
+    <form action="/add" method="post">
+        <input type="text" name="title" placeholder="请输入todo">
+        <br>
+        <button type="submit">添加</button>
+    </form>
+    {% for t in todos if not t.completed %}
+        <div>
+            {{ loop.index }} : {{ t.title }} @ 创建时间: {{ t.ct() }} @ 上次更新: {{ t.ut() }}
+            <a href="/delete?id={{ t.id }}">删除</a>
+            <a href="/edit?id={{ t.id }}">更新</a>
+        </div>
+    {% endfor %}
+</body>
+</html>

@@ -4,3 +4,8 @@ todo/todo-V4.5.1-python/__pycache__
 todo/todo-V4.5.2-flask/.idea
 todo/todo-V4.5.2-flask/__pycache__
 todo/todo-V4.5.2-flask/models/__pycache__
+todo/python/flask/todo-V4.5.0-jinja/__pycache__
+todo/python/flask/todo-V4.5.0-jinja/.idea
+todo/python/flask/todo-V4.5.0-jinja/models/__pycache__
+*.pyc
+*.iml
